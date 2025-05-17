@@ -135,7 +135,7 @@ function LeftPanel({imageUrl, name}) {
     )
 }
 
-function RightPanel({id}) {
+function RightPanel({id, weight, height}) {
 
     return (
         <>
@@ -155,7 +155,7 @@ function RightPanel({id}) {
 
                 <div className="top-screen-container">
                     <div id="about-screen" className="right-panel-screen">
-                        Height: 70cm Weight: 6.9kg
+                        Height: {height}cm Weight: {weight}kg
                     </div>
                 </div>
 
@@ -204,12 +204,14 @@ function RightPanel({id}) {
     )
 }
 
-function Search() {
-
+function Search({setInputDex}) {
+    const handleChange = (e) => {
+        setInputDex(e.target.value);
+    }
     return (
         <>
             <div className="search-container">
-                <input id="name-input" type="text" placeholder="Name / id"/>
+                <input id="name-input" type="text" placeholder="Name / id" onChange={handleChange} />
 
                 <div id="search-btn" className="ball-container">
                     <div className="upper-half-ball"></div>
@@ -226,13 +228,17 @@ function Dex_2() {
     const [dex, setDex] = useState(1);
     const [pokemonData, setPokemonData] = useState(
         {
-            "name": "",
-            "sprite": null,
-            "pokeId": 1,
-            "weight": null,
-            "height": null,
+            name: "",
+            sprite: null,
+            pokeId: 1,
+            weight: null,
+            height: null,
         }
     );
+
+    const handleDex = (value) => {
+        setDex(value);
+    }
 
     useEffect(() => {
         fetch(`https://pokeapi.co/api/v2/pokemon/${dex}`)
@@ -246,14 +252,19 @@ function Dex_2() {
                 setPokemonData(
                     {
                         name: data.name,
-                        sprite: data.sprites.front_default,
+                        // sprite: data.sprites.front_default,
+                        sprite: data.sprites.other?.["official-artwork"]?.front_default || data.sprites.front_default,
+                        // sprite: data.id === 1 ? data.sprites.front_default : data.sprites.other["official-artwork"].front_default,
+                        // sprite:  data.sprites.other["official-artwork"].front_default,
                         // description: data.flavor_text_entries.flavor_text
-                        pokeId: data.id
+                        pokeId: data.id,
+                        weight: data.weight,
+                        height: data.height,
                     }
                 );
             })
             .catch(err => console.log(err));
-    },[dex])
+    }, [dex])
     return (
         <>
             <Mention/>
@@ -265,13 +276,13 @@ function Dex_2() {
                     alt="logo"
                 />
             </div>
-            <Search/>
+            <Search setInputDex={handleDex} />
 
 
             <div id="pokedex">
                 <LeftPanel imageUrl={pokemonData.sprite}
                 name={pokemonData.name}/>
-                <RightPanel id={pokemonData.pokeId}/>
+                <RightPanel id={pokemonData.pokeId} height={pokemonData.height * 10} weight={pokemonData.weight * 0.1}/>
             </div>
         </>
     );
