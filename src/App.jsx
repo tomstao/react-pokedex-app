@@ -1,15 +1,13 @@
-import { useState, useEffect } from 'react'
 import './App.css'
-import Dex from "./components/Dex.jsx";
+import Dex_2 from "./components/Dex_2.jsx";
 
 function App() {
 
 
   return (
     <>
-      <div className='container'>
-        <Dex/>
-      </div>
+        {/*<Dex/>*/}
+          <Dex_2/>
     </>
   )
 }
